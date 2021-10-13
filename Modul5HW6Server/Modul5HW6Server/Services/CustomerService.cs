@@ -1,22 +1,36 @@
-﻿using Modul5HW6Server.ModelsView;
+﻿using Microsoft.EntityFrameworkCore;
+using Modul5HW6Server.DataAccess;
+using Modul5HW6Server.ModelsView;
 using Modul5HW6Server.Services.Abstractions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modul5HW6Server.Services
 {
     public class CustomerService : ICustomerService
     {
-        public void Add(CustomerView customer)
+        private MyDbContext _dbCntxt;
+        public CustomerService(MyDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbCntxt = dbContext;
         }
 
-        public void Delete(int id)
+        public async Task<IEnumerable<CustomerView>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var customers = await _dbCntxt.Customers.ToListAsync();
+            return customers;
+        }
+
+        public async Task DeleteByAsync(int id)
+        {
+            var customer = new CustomerView()
+            {
+                Id = id
+            };
+            _dbCntxt.Customers.Attach(customer);
+            _dbCntxt.Customers.Remove(customer);
+
+            await _dbCntxt.SaveChangesAsync();
         }
     }
 }

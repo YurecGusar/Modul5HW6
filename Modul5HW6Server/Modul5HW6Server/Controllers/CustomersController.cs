@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Modul5HW6Server.ModelsView;
-using System;
+using Modul5HW6Server.Services.Abstractions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modul5HW6Server.Controllers
@@ -12,53 +10,25 @@ namespace Modul5HW6Server.Controllers
     [Route("[controller]")]
     public class CustomersController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<CustomerView> Get()
+        private ICustomerService _cstmrSrvc;
+
+        public CustomersController(
+            ICustomerService customerService)
         {
-            return new List<CustomerView>()
-            {
-                new CustomerView()
-                {
-                    Id = 1,
-                    FirstName = "Yurii",
-                    LastName = "Leonov"
-                },
+            _cstmrSrvc = customerService;
+        }
 
-                new CustomerView()
-                {
-                    Id = 2,
-                    FirstName = "Name",
-                    LastName = "Second"
-                },
+        [HttpGet]
+        public async Task<IEnumerable<CustomerView>> Get()
+        {
+            return await _cstmrSrvc.GetAllAsync();
+        }
 
-                new CustomerView()
-                {
-                    Id = 3,
-                    FirstName = "Name",
-                    LastName = "Second"
-                },
-
-                new CustomerView()
-                {
-                    Id = 4,
-                    FirstName = "Name",
-                    LastName = "Second"
-                },
-
-                new CustomerView()
-                {
-                    Id = 5,
-                    FirstName = "Name",
-                    LastName = "Second"
-                },
-
-                new CustomerView()
-                {
-                    Id = 6,
-                    FirstName = "Name",
-                    LastName = "Second"
-                },
-            };
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task Delete(int id)
+        {
+            await _cstmrSrvc.DeleteByAsync(id);
         }
     }
 }
