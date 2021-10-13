@@ -10,5 +10,6 @@ namespace Modul5HW6Server.Services.Abstractions
     {
         public void Delete(int id);
         public void Add(CustomerView customer);
+        public IEnumerable<CustomerView> GetAll();
     }
 }

@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Modul5HW6Server.DataAccess;
+using Modul5HW6Server.Services;
+using Modul5HW6Server.Services.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +29,8 @@ namespace Modul5HW6Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ICustomerService, CustomerService>();
+            services.AddDbContextFactory<MyDbContext>();
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
