@@ -1,72 +1,36 @@
-﻿using Modul5HW6Server.ModelsView;
+﻿using Microsoft.EntityFrameworkCore;
+using Modul5HW6Server.DataAccess;
+using Modul5HW6Server.ModelsView;
 using Modul5HW6Server.Services.Abstractions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modul5HW6Server.Services
 {
     public class CustomerService : ICustomerService
     {
-        private List<CustomerView> _customers = new List<CustomerView>()
+        private MyDbContext _dbCntxt;
+        public CustomerService(MyDbContext dbContext)
         {
-                new CustomerView()
-                {
-                    Id = 1,
-                    FirstName = "Yurii",
-                    LastName = "Leonov"
-                },
-
-                new CustomerView()
-                {
-                    Id = 2,
-                    FirstName = "Andry",
-                    LastName = "Sergeev"
-                },
-
-                new CustomerView()
-                {
-                    Id = 3,
-                    FirstName = "Dima",
-                    LastName = "Nazarov"
-                },
-
-                new CustomerView()
-                {
-                    Id = 4,
-                    FirstName = "Alegzander",
-                    LastName = "Shpic"
-                },
-
-                new CustomerView()
-                {
-                    Id = 5,
-                    FirstName = "Sergey",
-                    LastName = "Polchaninov"
-                },
-
-                new CustomerView()
-                {
-                    Id = 6,
-                    FirstName = "Stepan",
-                    LastName = "Bandera"
-                }
-        };
-
-        public IEnumerable<CustomerView> GetAll()
-        {
-            return _customers;
+            _dbCntxt = dbContext;
         }
 
-        public void Add(CustomerView customer)
+        public async Task<IEnumerable<CustomerView>> GetAllAsync()
         {
-            _customers.Add(customer);
+            var customers = await _dbCntxt.Customers.ToListAsync();
+            return customers;
         }
 
-        public void Delete(int id)
+        public async Task DeleteByAsync(int id)
         {
-            _customers.Remove(_customers.FirstOrDefault(x => x.Id == id));
+            var customer = new CustomerView()
+            {
+                Id = id
+            };
+            _dbCntxt.Customers.Attach(customer);
+            _dbCntxt.Customers.Remove(customer);
+
+            await _dbCntxt.SaveChangesAsync();
         }
     }
 }
